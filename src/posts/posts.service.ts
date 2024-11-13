@@ -35,14 +35,19 @@ export class PostsService {
 
   async getPost(postID) {
     const desired_Post = await this.PostRepo.findOne({ where: { id: postID } });
+    if (!desired_Post) {
+      throw new HttpException("Post doesn't exsists", HttpStatus.NOT_FOUND);
+    }
     return {
       post: desired_Post,
     };
   }
 
   async deletePost(PostID) {
-    await this.PostRepo.delete(PostID);
-
+    const desired_Post = await this.PostRepo.delete(PostID);
+    if (desired_Post.affected == 0) {
+      throw new HttpException("Post doesn't exsists", HttpStatus.NOT_FOUND);
+    }
     return {
       Posts: await this.PostRepo.find(),
     };
