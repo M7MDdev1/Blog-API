@@ -1,20 +1,19 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
-export const dataSourceOptions: DataSourceOptions = {
+const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'postgres',
-  password: '',
-  database: 'MyBlogs',
-  // entities: [Episode],
-  //   autoLoadEntities: true,
-  synchronize: true, // todo: not safe for production and we should use migrations instead
-  // subscribers: [__dirname + '/domain/subscribers/*.subscriber{.ts,.js}'],
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  synchronize: false,
   migrations: ['src/migration/*{.ts,.js}'],
   entities: ['src/**/*.entity{.ts,.js}'],
+  logging: false,
 };
 
 const dataSource = new DataSource(dataSourceOptions);
