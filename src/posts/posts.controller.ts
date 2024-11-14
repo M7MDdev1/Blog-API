@@ -6,12 +6,17 @@ import {
   Header,
   Param,
   Post,
+  Put,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { faker } from '@faker-js/faker';
 import { DataSource } from 'typeorm';
 import { Posts } from './entities/post.entity';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -20,10 +25,16 @@ export class PostsController {
     private readonly dataSource: DataSource,
   ) {}
 
+  @UseGuards(JwtGuard)
+  @Get('debug-user')
+  async debugUser(@Request() req) {
+    return { user: req.user.ID }; // Returns the user object as response for easy testing
+  }
+
   @Post()
   @Header('content-type', 'application/json')
-  async create(@Body() boody) {
-    return this.postServices.create(boody);
+  async create(@Body() boody, @Request() req) {
+    return this.postServices.create(boody, req.user.ID);
   }
 
   @Public()
@@ -46,7 +57,6 @@ export class PostsController {
     return this.postServices.deletePost(PostID);
   }
 
-  @Public()
   @Post('faker')
   async faking() {
     const PostRepo = this.dataSource.getRepository(Posts);
@@ -58,5 +68,10 @@ export class PostsController {
       };
       await PostRepo.save(article);
     }
+  }
+
+  @Put(':id')
+  updatePost(@Param('id') id, @Body() updatedField) {
+    return this.postServices.UpdatePost(id, updatedField);
   }
 }

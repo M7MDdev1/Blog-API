@@ -9,6 +9,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Public } from './decorators/public.decorator';
+import { JwtGuard } from './guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -29,5 +30,11 @@ export class AuthController {
   @Post('register')
   async register(@Body() registerBody) {
     return await this.authService.register(registerBody);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('debug-user')
+  async debugUser(@Request() req) {
+    return { user: req.user.ID }; // Returns the user object as response for easy testing
   }
 }

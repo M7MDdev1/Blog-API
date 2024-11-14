@@ -7,19 +7,19 @@ export class PostsService {
   constructor(private readonly dataSource: DataSource) {}
   PostRepo = this.dataSource.getRepository(Posts);
 
-  async create(boody) {
+  async create(boody, id) {
     const post = new Posts();
-    const { body, title } = boody;
+    const { content, title } = boody;
 
-    if (!body || !title) {
+    if (!content || !title || !id) {
       throw new HttpException(
-        'Body and title are both required !',
+        'content and titl and author are both required !',
         HttpStatus.BAD_REQUEST,
       );
     }
-    post.body = body;
+    post.content = content;
     post.title = title;
-
+    post.autor = id;
     await this.PostRepo.save(post);
 
     return {
@@ -45,6 +45,20 @@ export class PostsService {
 
     return {
       Posts: await this.PostRepo.find(),
+    };
+  }
+
+  async UpdatePost(id: number, updatedFields: Partial<Posts>) {
+    // Check if `updatedFields` contains any properties
+    if (!updatedFields || Object.keys(updatedFields).length === 0) {
+      throw new Error('No update values provided');
+    }
+
+    await this.PostRepo.update(id, updatedFields);
+
+    return {
+      message: 'Article updated successfully',
+      post: await this.PostRepo.findOne({ where: { id: id } }),
     };
   }
 }

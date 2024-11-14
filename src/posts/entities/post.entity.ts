@@ -9,5 +9,8 @@ export class Posts {
   title: string;
 
   @Column()
-  body: string;
+  content: string;
+
+  @Column()
+  autor: string;
 }
