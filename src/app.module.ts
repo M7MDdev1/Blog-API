@@ -9,6 +9,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/guards/jwt.guard';
 import { JwtStrategy } from './auth/strategy/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { CommentsModule } from './comments/comments.module';
+import { FollowersFollowingModule } from './followers-following/followers-following.module';
 
 const entitiesPath = __dirname + '/**/*.entity{.ts,.js}';
 
@@ -31,6 +33,8 @@ const entitiesPath = __dirname + '/**/*.entity{.ts,.js}';
     }),
     UserModule,
     AuthModule,
+    CommentsModule,
+    FollowersFollowingModule,
   ],
   controllers: [AppController],
   providers: [
